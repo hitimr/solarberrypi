@@ -2,6 +2,7 @@ import os
 import requests
 import json
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 from datetime import date, datetime, timedelta
 
@@ -38,27 +39,46 @@ class SE_Interace:
         #Example: powerDetails?meters=PRODUCTION,CONSUMPTION&startTime=2015-11-21%2011:00:00&endTime=2015-11-22%2013:00:00&api_key=L4QLVQ1LOKCQX2193VSEICXW61NP6B1O
         #Exampl: https://monitoringapi.solaredge.com/site/1/powerDetails?meters=PRODUCTION,CONSUMPTION&startTime=2021-08-19 11:00:00&endTime=2021-08-20 13:00:00&api_key=NTT5LNJGA5CDCFI9OZGZCX2W1VD3CCW2
 
-        meters="PRODUCTION,CONSUMPTION"
+        # (Production/Consumption/SelfConsumption/FeedIn (export)/Purchased(import))
+        
+        meters="Consumption,Production"
+        meterCnt = 1
+        for letter in meters: 
+            if letter == ",": 
+                meterCnt += 1
 
 
         startTime = (endTime - timeIntervall).strftime(cfg.DATETIME_FORMAT)
 
         url = cfg.URL_SOLAR_EDGE_BASE + f"powerDetails?meters={meters}&startTime={startTime}&endTime={endTime.strftime(cfg.DATETIME_FORMAT)}&api_key={self.apiKey}"
         response = self.request(url)
-        #print(response["powerDetails"]["meters"])
-        df = pd.DataFrame.from_dict(response["powerDetails"]["meters"][0]["values"])
-        print(df)
-        plt.plot(df["value"])
-        plt.show()
+        
+        data = pd.DataFrame()
+        types = []
+        for i in range(meterCnt):
+            type = response["powerDetails"]["meters"][i]["type"]
+            types.append(type)
 
-        return
+            df = pd.DataFrame()
+            df = pd.DataFrame.from_dict(response["powerDetails"]["meters"][i]["values"])
+            df = df.rename(columns={"value" : type})
+            df = df.set_index("date")
+            data = pd.concat([data, df])
+            
+
+        data = data.groupby(level=0).sum()
+        data = data.fillna(0)
+        data.to_csv("out/data.csv")
+
+        return data
         
 
 
 if __name__ == "__main__":
     se_interface = SE_Interace(cfg.FILE_API_KEY)
 
-    now = datetime.now()
-    se_interface.request_SitePowerDetailed(now, timedelta(days=1))
+    #now = datetime.now() - timedelta(minutes=15)
+    now = datetime(year=2021, month=8, day=15, hour=23)
+    se_interface.request_SitePowerDetailed(now, timedelta(days=2))
 
     pass
