@@ -1,11 +1,17 @@
-import requests
 import os
+import requests
 import json
+import pandas as pd
+import matplotlib.pyplot as plt
+from datetime import date, datetime, timedelta
+
 
 import src.config as cfg
 
 
 class SE_Interace:
+    url_request = str
+
     def __init__(self, api_file):
         assert os.path.exists(api_file)
 
@@ -16,10 +22,43 @@ class SE_Interace:
         assert("key" in self.api_credentials)
         assert("id" in self.api_credentials)
 
+        self.apiKey = self.api_credentials["key"]
+        #self.url_request = cfg.URL_SOLAR_EDGE_JSON_ENDPOINT + self.api_credentials["key"]
+
+
+    def request(self, url):
+        print(f"Requesting: {url}")
+        r = requests.get(url)
+        #r = requests.get("https://monitoringapi.solaredge.com/sites/list?size=5&searchText=Lyon&sortProperty=name&sortOrder=ASC&api_key=L4QLVQ1LOKCQX2193VSEICXW61NP6B1O")
+        assert(r.status_code == cfg.STATUS_CODE_OK) # Got invalid response // TODO: proper error hanling
+        #print(r.content)
+        return r.json()
+
+    def request_SitePowerDetailed(self, endTime, timeIntervall,):
+        #Example: powerDetails?meters=PRODUCTION,CONSUMPTION&startTime=2015-11-21%2011:00:00&endTime=2015-11-22%2013:00:00&api_key=L4QLVQ1LOKCQX2193VSEICXW61NP6B1O
+        #Exampl: https://monitoringapi.solaredge.com/site/1/powerDetails?meters=PRODUCTION,CONSUMPTION&startTime=2021-08-19 11:00:00&endTime=2021-08-20 13:00:00&api_key=NTT5LNJGA5CDCFI9OZGZCX2W1VD3CCW2
+
+        meters="PRODUCTION,CONSUMPTION"
+
+
+        startTime = (endTime - timeIntervall).strftime(cfg.DATETIME_FORMAT)
+
+        url = cfg.URL_SOLAR_EDGE_BASE + f"powerDetails?meters={meters}&startTime={startTime}&endTime={endTime.strftime(cfg.DATETIME_FORMAT)}&api_key={self.apiKey}"
+        response = self.request(url)
+        #print(response["powerDetails"]["meters"])
+        df = pd.DataFrame.from_dict(response["powerDetails"]["meters"][0]["values"])
+        print(df)
+        plt.plot(df["value"])
+        plt.show()
+
+        return
+        
 
 
 if __name__ == "__main__":
-    SE_Interace(cfg.FILE_API_KEY)
-    
+    se_interface = SE_Interace(cfg.FILE_API_KEY)
+
+    now = datetime.now()
+    se_interface.request_SitePowerDetailed(now, timedelta(days=1))
 
     pass
