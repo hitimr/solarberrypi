@@ -1,4 +1,4 @@
-import os
+import os, sys
 import requests
 import json
 import pandas as pd
@@ -6,14 +6,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 from datetime import date, datetime, timedelta
 
+sys.path.insert(0, ".")
+import config as cfg
 
-import src.config as cfg
 
-
-class SE_Interace:
+class SE_Interface:
     url_request = str
 
-    def __init__(self, api_file):
+    def __init__(self):
+        api_file = cfg.FILE_API_KEY
         assert os.path.exists(api_file)
 
         # Load API Key from file
@@ -35,7 +36,7 @@ class SE_Interace:
         #print(r.content)
         return r.json()
 
-    def request_SitePowerDetailed(self, endTime, timeIntervall,):
+    def request_SitePowerDetailed(self, endTime, timeIntervall, safeToFile=False):
         #Example: powerDetails?meters=PRODUCTION,CONSUMPTION&startTime=2015-11-21%2011:00:00&endTime=2015-11-22%2013:00:00&api_key=L4QLVQ1LOKCQX2193VSEICXW61NP6B1O
         #Exampl: https://monitoringapi.solaredge.com/site/1/powerDetails?meters=PRODUCTION,CONSUMPTION&startTime=2021-08-19 11:00:00&endTime=2021-08-20 13:00:00&api_key=NTT5LNJGA5CDCFI9OZGZCX2W1VD3CCW2
 
@@ -68,14 +69,14 @@ class SE_Interace:
 
         data = data.groupby(level=0).sum()
         data = data.fillna(0)
-        data.to_csv("out/data.csv")
+        if safeToFile: data.to_csv("out/data.csv")
 
         return data
         
 
 
 if __name__ == "__main__":
-    se_interface = SE_Interace(cfg.FILE_API_KEY)
+    se_interface = SE_Interface()
 
     #now = datetime.now() - timedelta(minutes=15)
     now = datetime(year=2021, month=8, day=15, hour=23)
