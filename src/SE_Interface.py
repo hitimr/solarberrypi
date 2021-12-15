@@ -69,6 +69,12 @@ class SE_Interface:
 
         data = data.groupby(level=0).sum()
         data = data.fillna(0)
+
+        # TODO: move to SE Interface
+        data['Datetime'] = pd.to_datetime(data.index)   
+        data = data.set_index("Datetime")
+
+
         if safeToFile: data.to_csv("out/data.csv")
 
         return data
