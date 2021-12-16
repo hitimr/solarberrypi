@@ -12,6 +12,8 @@ import config as cfg
 
 class SE_Interface:
     url_request = str
+    last_respnse = object
+    last_data = pd.DataFrame
 
     def __init__(self):
         api_file = cfg.FILE_API_KEY
@@ -66,15 +68,31 @@ class SE_Interface:
             df = df.set_index("date")
             data = pd.concat([data, df])
             
-
+        # Group data and fillna
         data = data.groupby(level=0).sum()
         data = data.fillna(0)
 
-        # TODO: move to SE Interface
+        
+        # Convert datetime strings to datetime objects
         data['Datetime'] = pd.to_datetime(data.index)   
         data = data.set_index("Datetime")
 
+        # Sometimes the columns for Production and Consumption are switched for
+        # some reason. To fix this we check if Production > Consumption during
+        # the night
+        data["hour"] = data.index.hour
+        night_data = data[data["hour"] <= 4] # extract data from 00:00 - 04:00
 
+        if(night_data["Production"].sum() > night_data["Consumption"].sum()):
+            data = data.rename(columns={
+                "Production" : "Consumption" , 
+                "Consumption" : "Production"})
+
+        data = data.drop(columns=["hour"])  # drop temporary series
+
+        # save results
+        self.last_response = response
+        self.data = data
         if safeToFile: data.to_csv("out/data.csv")
 
         return data
