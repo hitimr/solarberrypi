@@ -3,3 +3,4 @@ logs/
 __pycache__/*.pyc
 *.pyc
 res/api_key.csv
+.vscode/
