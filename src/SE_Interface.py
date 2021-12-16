@@ -82,13 +82,18 @@ class SE_Interface:
         # the night
         data["hour"] = data.index.hour
         night_data = data[data["hour"] <= 4] # extract data from 00:00 - 04:00
-
-        if(night_data["Production"].sum() > night_data["Consumption"].sum()):
+        
+        #if(night_data["Production"].sum() > night_data["Consumption"].sum()):
+        if False:
             data = data.rename(columns={
                 "Production" : "Consumption" , 
                 "Consumption" : "Production"})
 
         data = data.drop(columns=["hour"])  # drop temporary series
+
+        # Ensure correct order of columns
+        data = data[["Production", "Consumption"]]
+
 
         # save results
         self.last_response = response
