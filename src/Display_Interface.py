@@ -17,25 +17,45 @@ logging.basicConfig(level=logging.DEBUG)
 import config as cfg
 
 # Dispaly stuff
+import pandas
 from lib.epd7in5_V2 import *
 from PIL import Image,ImageDraw,ImageFont
 
 
 
-class SE_Interface:
-    def __init__(self):
+class Display_Interface:
+    self.width = int
+    self.height = int
 
-        pass
+    def __init__(self, width=cfg.EPD_WIDTH, height=cfg.EPD_HEIGHT):
+        # class init
+        self.width = int(width)
+        self.heigth = int(height)
+
+        # Init hardware
+        self.epd = EPD()
+        self.epd.init()
+        self.epd.Clear()
+    
+    def display_image(self, fileName):
+        # load image
+        img = Image.open(fileName)
+
+        # transform to binary array
+        thresh =  cfg.BW_THRESH
+        fn = lambda x : 255 if x > thresh else 0
+        r = img.convert('L').point(fn, mode='1')
+
+        # resize to fit display
+        img = img.resize((self.width, self.height))
+        #file_out = DIR_OUT + "plot.bmp"
+        #img.save(file_out)
+
+        Himage = Image.open(img)
+        self.epd.display(epd.getbuffer(Himage))
+        time.sleep(1)
 
 
 if __name__ == "__main__":
-    epd = EPD()
-
-    logging.info("init and Clear")
-    epd.init()
-    epd.Clear()
-
-    Himage = Image.open("../out/plot.bmp")
-    epd.display(epd.getbuffer(Himage))
-    time.sleep(2)
-    print("Hi")
+    di = Display_Interface()
+    di.display_image("../out/plot.png")
