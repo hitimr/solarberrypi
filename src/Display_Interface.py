@@ -17,7 +17,7 @@ logging.basicConfig(level=logging.DEBUG)
 import config as cfg
 
 # Dispaly stuff
-from lib.epd7in5b_V2 import *
+from lib.epd7in5_V2 import *
 from PIL import Image,ImageDraw,ImageFont
 
 
