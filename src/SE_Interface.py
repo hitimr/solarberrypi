@@ -54,49 +54,21 @@ class SE_Interface:
         startTime = (endTime - timeIntervall).strftime(cfg.DATETIME_FORMAT)
 
         url = cfg.URL_SOLAR_EDGE_BASE + f"powerDetails?meters={meters}&startTime={startTime}&endTime={endTime.strftime(cfg.DATETIME_FORMAT)}&api_key={self.apiKey}"
-        response = self.request(url)
+        self.last_response = self.request(url)
         
         data = pd.DataFrame()
-        types = []
-        for i in range(meterCnt):
-            type = response["powerDetails"]["meters"][i]["type"]
-            types.append(type)
-
-            df = pd.DataFrame()
-            df = pd.DataFrame.from_dict(response["powerDetails"]["meters"][i]["values"])
-            df = df.rename(columns={"value" : type})
-            df = df.set_index("date")
-            data = pd.concat([data, df])
-            
-        # Group data and fillna
-        data = data.groupby(level=0).sum()
+        meters = self.last_response["powerDetails"]["meters"]
+        for meter in meters:
+            data[meter["type"]] = pd.json_normalize(meter["values"]).set_index("date")
         data = data.fillna(0)
 
         
         # Convert datetime strings to datetime objects
-        data['Datetime'] = pd.to_datetime(data.index)   
-        data = data.set_index("Datetime")
-
-        # Sometimes the columns for Production and Consumption are switched for
-        # some reason. To fix this we check if Production > Consumption during
-        # the night
-        data["hour"] = data.index.hour
-        night_data = data[data["hour"] <= 4] # extract data from 00:00 - 04:00
-        
-        #if(night_data["Production"].sum() > night_data["Consumption"].sum()):
-        if False:
-            data = data.rename(columns={
-                "Production" : "Consumption" , 
-                "Consumption" : "Production"})
-
-        data = data.drop(columns=["hour"])  # drop temporary series
-
-        # Ensure correct order of columns
-        data = data[["Production", "Consumption"]]
+        #data['Datetime'] =  
+        data = data.set_index(pd.to_datetime(data.index))
 
 
         # save results
-        self.last_response = response
         self.data = data
         if safeToFile: 
             data.to_csv(cfg.DIR_OUT + "last_data.csv")
