@@ -12,7 +12,7 @@ import config as cfg
 
 class SE_Interface:
     url_request = str
-    last_respnse = object
+    last_response = requests
     last_data = pd.DataFrame
 
     def __init__(self):
@@ -38,13 +38,13 @@ class SE_Interface:
         #print(r.content)
         return r.json()
 
-    def request_SitePowerDetailed(self, endTime, timeIntervall, safeToFile=False):
+    def request_SitePowerDetailed(self, endTime, timeIntervall, safeToFile=True):
         #Example: powerDetails?meters=PRODUCTION,CONSUMPTION&startTime=2015-11-21%2011:00:00&endTime=2015-11-22%2013:00:00&api_key=L4QLVQ1LOKCQX2193VSEICXW61NP6B1O
         #Exampl: https://monitoringapi.solaredge.com/site/1/powerDetails?meters=PRODUCTION,CONSUMPTION&startTime=2021-08-19 11:00:00&endTime=2021-08-20 13:00:00&api_key=NTT5LNJGA5CDCFI9OZGZCX2W1VD3CCW2
 
         # (Production/Consumption/SelfConsumption/FeedIn (export)/Purchased(import))
         
-        meters="Consumption,Production"
+        meters="Consumption,Production,SelfConsumption,FeedIn"
         meterCnt = 1
         for letter in meters: 
             if letter == ",": 
@@ -98,7 +98,10 @@ class SE_Interface:
         # save results
         self.last_response = response
         self.data = data
-        if safeToFile: data.to_csv("out/data.csv")
+        if safeToFile: 
+            data.to_csv(cfg.DIR_OUT + "last_data.csv")
+            with open(cfg.DIR_OUT + "last_response.json", 'w') as outfile:
+                json.dump(self.last_response, outfile, indent=4)
 
         return data
         
@@ -109,6 +112,6 @@ if __name__ == "__main__":
 
     #now = datetime.now() - timedelta(minutes=15)
     now = datetime(year=2021, month=8, day=15, hour=23)
-    se_interface.request_SitePowerDetailed(now, timedelta(days=2))
+    se_interface.request_SitePowerDetailed(now, timedelta(days=2), safeToFile=True)
 
     pass
