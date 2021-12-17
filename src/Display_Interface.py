@@ -1,5 +1,3 @@
-import sys
-import os
 import time
 import traceback
 from pathlib import Path
@@ -14,14 +12,14 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0,parentdir) 
 
 import logging
-logging.basicConfig(level=logging.DEBUG)
 
 import config as cfg
+import misc
 
 # Dispaly stuff
-import pandas
-from lib.epd7in5_V2 import *
-from PIL import Image,ImageDraw,ImageFont
+if misc.is_raspi():
+    from lib.epd7in5_V2 import *
+    from PIL import Image,ImageDraw,ImageFont
 
 def generate_plot(data, outFileName):
     df = data.copy()
@@ -32,13 +30,13 @@ def generate_plot(data, outFileName):
     # Plot lines
     scaling = 100
     fontsize = 14
-    width = EPD_WIDTH / scaling
-    height = EPD_HEIGHT / scaling
+    width = cfg.EPD_WIDTH / scaling
+    height = cfg.EPD_HEIGHT / scaling
     cmap = colors.ListedColormap(["black"])
 
 
     # Add total consumption
-    hours = pd.Timedelta(data.index.values[-1] - data.index.values[0]) / pd.Timedelta("1 hour")
+    hours = float((data.index.values[-1] - data.index.values[0])) * 10**-9 / 3600
     total_production = df["Production"].sum() / hours
     total_consumption = df["Consumption"].sum() / hours
     total_feedin = df["FeedIn"].sum() / hours
@@ -67,16 +65,18 @@ def generate_plot(data, outFileName):
         fontsize=fontsize)
     plt.gca().xaxis.set_tick_params(which='both', width=3)
     plt.gca().yaxis.set_tick_params(which='both', width=3)
+    plt.subplots_adjust(left=0.06, right=0.995, top=0.995, bottom=0.1)  # page maargins
 
     # Output
-    #plt.tight_layout()
-    page_margin = 0.075
-    plt.subplots_adjust(left=0.06, right=0.995, top=0.995, bottom=0.1)
-    plt.savefig("../out/plot.png", dpi=500, facecolor="white")
+    if(outFileName != ""):
+         plt.savefig(outFileName, dpi=500, facecolor="white")
 
 
 
 def display_image(fileName):
+    if(misc.is_raspi() == False):
+        raise NotImplementedError("This machine probably has no interface installed")
+
     epd = EPD()
     epd.init()
 
@@ -101,4 +101,8 @@ def display_image(fileName):
 
 
 if __name__ == "__main__":
-    display_image(cfg.DIR_OUT + "plot.png")
+    logging.basicConfig(level=logging.DEBUG)
+
+    data = pd.read_csv(cfg.DIR_OUT + "last_data.csv")
+    plotFile = cfg.DIR_OUT + "plot.png"
+    generate_plot(data, plotFile)
