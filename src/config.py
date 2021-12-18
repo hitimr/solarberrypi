@@ -13,7 +13,6 @@ else: SEP = "/" # Linux
 DIR_PROJ_ROOT = str(Path(__file__).parent.parent.absolute()) + SEP
 DIR_SRC = DIR_PROJ_ROOT + "src" + SEP
 DIR_RES = DIR_PROJ_ROOT + "res" + SEP
-DIR_LOG = DIR_PROJ_ROOT + "logs" + SEP
 DIR_OUT = DIR_PROJ_ROOT + "out" + SEP
 
 
@@ -33,10 +32,6 @@ EPD_WIDTH       = 800
 EPD_HEIGHT      = 480
 EPD_DPI         = 122
 BW_THRESH = 20
-
-# Logging
-LOGGING_BASE_FILENAME = DIR_LOG + "log.txt"
-
 
 
 # Misc
