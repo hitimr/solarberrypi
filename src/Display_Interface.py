@@ -59,17 +59,21 @@ def generate_plot(data, outFileName=""):
     plt.title(f"Gesamtverbrauch (24h): {total:.2f}kWh", fontsize=fontsize*1.2)
     plt.grid(linewidth=2)
     plt.xlabel("")
-    plt.ylabel("Leistung [kW]", fontsize=fontsize)
+    plt.ylabel("Leistung [kW]", fontsize=fontsize*1.2)
     plt.legend(
         labels=[
             f"Produktion: {total_production:.2f} kWh",
             f"Verbrauch:  {total_consumption:.2f} kWh",
             f"Rückspeis.: {total_feedin:.2f} kWh", ],
         fontsize=fontsize)
-    plt.gca().xaxis.set_tick_params(which='both', width=3)
-    plt.gca().yaxis.set_tick_params(which='both', width=3)
-    plt.subplots_adjust(left=0.06, right=0.995, top=0.995,
-                        bottom=0.1)  # page margins
+    plt.gca().xaxis.set_tick_params(which='both', width=3, labelsize=16)
+    plt.gca().yaxis.set_tick_params(which='both', width=3, labelsize=16)
+
+    # Output
+    # plt.tight_layout()
+    page_margin = 0.075
+    plt.subplots_adjust(left=0.07, right=0.995, top=0.995, bottom=0.11)
+    plt.savefig("out/plot.png", dpi=500, facecolor="white")
 
     # Output
     if(outFileName != ""):
