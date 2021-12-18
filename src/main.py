@@ -1,4 +1,4 @@
-from datetime import date, datetim
+from datetime import date, datetime
 
 from config import *
 from SE_Interface import *

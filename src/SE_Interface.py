@@ -81,8 +81,8 @@ class SE_Interface:
 if __name__ == "__main__":
     se_interface = SE_Interface()
 
-    now = datetime.now()# - timedelta(minutes=15)
-    #now = datetime(year=2021, month=8, day=15, hour=23)
+    #now = datetime.now()# - timedelta(minutes=15)
+    now = datetime(year=2021, month=8, day=15, hour=23)
     se_interface.request_SitePowerDetailed(now, timedelta(days=2), safeToFile=True)
 
     pass

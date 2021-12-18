@@ -19,7 +19,7 @@ if misc.is_raspi():
     from lib.epd7in5_V2 import *
     from PIL import Image,ImageDraw,ImageFont
 
-def generate_plot(data, outFileName):
+def generate_plot(data, outFileName=""):
     if(len(data) == 0): 
         raise ValueError("DataFrame seems to be empty")
 

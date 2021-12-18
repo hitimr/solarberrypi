@@ -7,12 +7,16 @@ import os,sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__))) 
 
 import src.config as cfg
+import src.misc as misc
 from src.SE_Interface import SE_Interface
-from src.Display_Interface import generate_plot
+from src.Display_Interface import generate_plot, display_image
 
+
+# remove old test output
 if os.path.exists(cfg.DIR_OUT_TEST):
     shutil.rmtree(cfg.DIR_OUT_TEST)
 os.makedirs(cfg.DIR_OUT_TEST, exist_ok=True)
+
 
 def test_SE_Interface():
     se_interface = SE_Interface()
@@ -26,11 +30,18 @@ def test_SE_Interface():
 
 def test_generate_plot():
     # read prepared data, generate a plot and check if a file was written
-    df = pd.read_csv("test/test_data.csv")
+    df = pd.read_csv("test/res/test_data.csv")
 
     outFile = cfg.DIR_OUT_TEST + "plot.png"
     generate_plot(df, outFile)   
     assert(os.path.isfile(outFile))   
+
+
+@pytest.mark.skipif(misc.is_raspi() == False, reason="RaspberryPi required")
+def test_display_image():
+    display_image(cfg.DIR_OUT_TEST + "plot.png")
+
+
 
 
 

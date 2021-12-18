@@ -38,3 +38,4 @@ BW_THRESH = 20
 # Misc
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 STATUS_CODE_OK = 200
+DISPLAY_INTERVAL = 1    # How many days are displayed on the graph
