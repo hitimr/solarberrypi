@@ -35,9 +35,15 @@ class SE_Interface:
         logging.info(f"Requesting: {url}")
         r = requests.get(url)
         #r = requests.get("https://monitoringapi.solaredge.com/sites/list?size=5&searchText=Lyon&sortProperty=name&sortOrder=ASC&api_key=L4QLVQ1LOKCQX2193VSEICXW61NP6B1O")
-        assert(r.status_code == cfg.STATUS_CODE_OK) # Got invalid response // TODO: proper error hanling
-        #print(r.content)
-        return r.json()
+        
+        if(r.status_code == cfg.STATUS_CODE_OK):
+            return r.json()
+        
+        if(r.status_code == cfg.STATUS_CODE_MAX_REQUESTS_REACHED):
+            raise RuntimeError("Maximum number of requests per day reached")
+
+        else:  
+            raise RuntimeError(f"Received unknown Error Code {r.status_code} from {cfg.URL_SOLAR_EDGE_JSON_ENDPOINT}")
 
     def request_SitePowerDetailed(self, endTime, timeIntervall, safeToFile=True):
         #Example: powerDetails?meters=PRODUCTION,CONSUMPTION&startTime=2015-11-21%2011:00:00&endTime=2015-11-22%2013:00:00&api_key=L4QLVQ1LOKCQX2193VSEICXW61NP6B1O

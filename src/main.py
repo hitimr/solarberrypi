@@ -20,7 +20,7 @@ if __name__ == "__main__":
         logging.info("Displaying Image")
         display_image(plotFile)
     else:
-       logging.warn("No image is displayed because no Raspberry Pi is detected.") 
+       logging.warning("No image is displayed because no Raspberry Pi is detected.") 
 
 
     
