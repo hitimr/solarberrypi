@@ -12,6 +12,8 @@ def test_config():
     assert os.path.exists(cfg.DIR_PROJ_ROOT)
     assert os.path.exists(cfg.DIR_SRC)
     assert os.path.exists(cfg.DIR_RES)
+    assert os.path.exists(cfg.DIR_LOG)
+    assert os.path.exists(cfg.DIR_OUT)
 
     # Files
     assert os.path.exists(cfg.FILE_API_KEY)
