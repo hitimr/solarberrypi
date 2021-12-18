@@ -1,10 +1,7 @@
 import pytest
-import os
-import sys
-from pathlib import Path
 
-# Add parent folder to search path
-sys.argv.insert(0, Path(__file__).parent.parent.absolute())
+import os,sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__))) 
 
 
 import src.config as cfg

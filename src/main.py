@@ -1,6 +1,4 @@
-from datetime import date, datetime
-import logging
-from logging.handlers import TimedRotatingFileHandler
+from datetime import date, datetim
 
 from config import *
 from SE_Interface import *
@@ -16,7 +14,7 @@ if __name__ == "__main__":
 
     plotFile = DIR_OUT + "plot.png"
     generate_plot(data, plotFile)
-    
+
     if misc.is_raspi():
         display_image(plotFile)
 
