@@ -19,8 +19,11 @@ if __name__ == "__main__":
     if misc.is_raspi():
         logging.info("Displaying Image")
         display_image(plotFile)
+        logging.info("Finished")
     else:
        logging.warning("No image is displayed because no Raspberry Pi is detected.") 
+
+    
 
 
     

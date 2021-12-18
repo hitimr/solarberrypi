@@ -98,13 +98,16 @@ def display_image(fileName):
     epd = EPD()
     epd.init()
 
-    logging.info("Writing data")
-    epd.display(epd.getbuffer(img))
-
     # save output to file as well
     logging.info("Saving bitmap")
     file_out = cfg.DIR_OUT + "plot.bmp"
     img.save(file_out)
+
+    logging.info("Writing data")
+    epd.display(epd.getbuffer(img))
+    logging.info("Writing data complete")
+
+
 
 
 
