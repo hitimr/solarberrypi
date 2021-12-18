@@ -1,4 +1,3 @@
-import src.config as cfg
 import os
 import sys
 import requests
@@ -10,7 +9,7 @@ import matplotlib.pyplot as plt
 from datetime import date, datetime, timedelta
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
-
+import src.config as cfg
 
 class SE_Interface:
     url_request = str
