@@ -23,18 +23,18 @@ def generate_plot(data, outFileName=""):
     if(len(data) == 0): 
         raise ValueError("DataFrame seems to be empty")
 
+    logging.info("Processing data")
     df = data.copy()
     df = df[["Production", "Consumption", "FeedIn",]]
     df = df / 1000 # set to KWh
     df = df.iloc[1: , :]    # Drop first row
 
-    # Plot lines
+    
     scaling = 100
     fontsize = 14
     width = cfg.EPD_WIDTH / scaling
     height = cfg.EPD_HEIGHT / scaling
     cmap = colors.ListedColormap(["black"])
-
 
     # Add total consumption
     hours = float((data.index.values[-1] - data.index.values[0])) * 10**-9 / 3600
@@ -43,7 +43,8 @@ def generate_plot(data, outFileName=""):
     total_feedin = df["FeedIn"].sum() / hours
     total = (total_consumption - total_production - total_feedin) 
 
-
+    # Plot lines
+    logging.info("Generating plot")
     df.plot(
         style=["--", "-", ":"], 
         figsize=(width, height), 
@@ -70,7 +71,8 @@ def generate_plot(data, outFileName=""):
 
     # Output
     if(outFileName != ""):
-         plt.savefig(outFileName, dpi=500, facecolor="white")
+        logging.info("Exporting as .png")
+        plt.savefig(outFileName, dpi=500, facecolor="white")
 
 
 
@@ -78,10 +80,9 @@ def display_image(fileName):
     if(misc.is_raspi() == False):
         raise NotImplementedError("This machine probably has no interface installed")
 
-    epd = EPD()
-    epd.init()
 
     # load image
+    logging.info("Transforming to binary bitmap")
     img = Image.open(fileName)
 
     # transform to binary array
@@ -93,9 +94,15 @@ def display_image(fileName):
     img = img.resize((cfg.EPD_WIDTH, cfg.EPD_HEIGHT))
 
     # write to display
+    logging.info("Initializing Display")
+    epd = EPD()
+    epd.init()
+
+    logging.info("Writing data")
     epd.display(epd.getbuffer(img))
 
     # save output to file as well
+    logging.info("Saving bitmap")
     file_out = cfg.DIR_OUT + "plot.bmp"
     img.save(file_out)
 

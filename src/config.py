@@ -1,6 +1,9 @@
 import sys
 import os
+import logging
 from pathlib import Path
+
+logging.basicConfig(level=logging.INFO)
 
 # Add parent folder to search path
 sys.argv.insert(0,Path(__file__).parent.parent.absolute())

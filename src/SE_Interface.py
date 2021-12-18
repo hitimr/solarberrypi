@@ -3,6 +3,7 @@ import requests
 import json
 import pandas as pd
 import numpy as np
+import logging
 import matplotlib.pyplot as plt
 from datetime import date, datetime, timedelta
 
@@ -31,7 +32,7 @@ class SE_Interface:
 
 
     def request(self, url):
-        print(f"Requesting: {url}")
+        logging.info(f"Requesting: {url}")
         r = requests.get(url)
         #r = requests.get("https://monitoringapi.solaredge.com/sites/list?size=5&searchText=Lyon&sortProperty=name&sortOrder=ASC&api_key=L4QLVQ1LOKCQX2193VSEICXW61NP6B1O")
         assert(r.status_code == cfg.STATUS_CODE_OK) # Got invalid response // TODO: proper error hanling
