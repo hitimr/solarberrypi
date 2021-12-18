@@ -10,7 +10,8 @@ import misc
 if __name__ == "__main__":
     now = datetime.now()
     se_interface = SE_Interface()
-    data = se_interface.request_SitePowerDetailed(datetime.now(), timedelta(days=1))
+    data = se_interface.request_SitePowerDetailed(
+        datetime.now(), timedelta(days=1))
 
     logging.info("Generating plot")
     plotFile = DIR_OUT + "plot.png"
@@ -21,10 +22,5 @@ if __name__ == "__main__":
         display_image(plotFile)
         logging.info("Finished")
     else:
-       logging.warning("No image is displayed because no Raspberry Pi is detected.") 
-
-    
-
-
-    
-
+        logging.warning(
+            "No image is displayed because no Raspberry Pi is detected.")
