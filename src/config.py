@@ -14,6 +14,7 @@ DIR_PROJ_ROOT = str(Path(__file__).parent.parent.absolute()) + SEP
 DIR_SRC = DIR_PROJ_ROOT + "src" + SEP
 DIR_RES = DIR_PROJ_ROOT + "res" + SEP
 DIR_OUT = DIR_PROJ_ROOT + "out" + SEP
+DIR_OUT_TEST = DIR_OUT + "test" + SEP
 
 
 # Files

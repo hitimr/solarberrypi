@@ -6,15 +6,13 @@ from matplotlib import colors
 import pandas as pd
 
 # Project Stuff
-import os,sys,inspect
-currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-parentdir = os.path.dirname(currentdir)
-sys.path.insert(0,parentdir) 
+import os,sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__))) 
 
 import logging
 
-import config as cfg
-import misc
+import src.config as cfg
+import src.misc as misc
 
 # Dispaly stuff
 if misc.is_raspi():
@@ -22,6 +20,9 @@ if misc.is_raspi():
     from PIL import Image,ImageDraw,ImageFont
 
 def generate_plot(data, outFileName):
+    if(len(data) == 0): 
+        raise ValueError("DataFrame seems to be empty")
+
     df = data.copy()
     df = df[["Production", "Consumption", "FeedIn",]]
     df = df / 1000 # set to KWh

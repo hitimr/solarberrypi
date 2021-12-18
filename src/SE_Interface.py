@@ -6,14 +6,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 from datetime import date, datetime, timedelta
 
-sys.path.insert(0, ".")
-import config as cfg
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__))) 
+import src.config as cfg
 
 
 class SE_Interface:
     url_request = str
     last_response = requests
-    last_data = pd.DataFrame
+    data = pd.DataFrame
 
     def __init__(self):
         api_file = cfg.FILE_API_KEY
@@ -64,7 +64,6 @@ class SE_Interface:
 
         
         # Convert datetime strings to datetime objects
-        #data['Datetime'] =  
         data = data.set_index(pd.to_datetime(data.index))
 
 

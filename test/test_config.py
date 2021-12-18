@@ -3,7 +3,6 @@ import pytest
 import os,sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__))) 
 
-
 import src.config as cfg
 
 
@@ -12,7 +11,6 @@ def test_config():
     assert os.path.exists(cfg.DIR_PROJ_ROOT)
     assert os.path.exists(cfg.DIR_SRC)
     assert os.path.exists(cfg.DIR_RES)
-    assert os.path.exists(cfg.DIR_LOG)
     assert os.path.exists(cfg.DIR_OUT)
 
     # Files
