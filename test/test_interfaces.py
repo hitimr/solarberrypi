@@ -1,7 +1,3 @@
-from src.Display_Interface import generate_plot, display_image
-from src.SE_Interface import SE_Interface
-import src.misc as misc
-import src.config as cfg
 import pytest
 import pandas as pd
 import shutil
@@ -9,7 +5,13 @@ from datetime import datetime, timedelta
 
 import os
 import sys
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+
+from src.Display_Interface import generate_plot, display_image
+from src.SE_Interface import SE_Interface
+import src.misc as misc
+import src.config as cfg
 
 
 # remove old test output
