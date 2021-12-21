@@ -26,10 +26,11 @@ def generate_plot(data, outFileName=""):
 
     logging.info("Processing data")
     df = data.copy()
-    df = df[["Production", "Consumption", "FeedIn", ]]
+    df = df[["SelfConsumption", "Purchased", "FeedIn"]]
     df = df / 1000  # set to KWh
     df = df.iloc[1:, :]    # Drop first row
 
+    # Plot lines
     scaling = 100
     fontsize = 14
     width = cfg.EPD_WIDTH / scaling
@@ -39,31 +40,33 @@ def generate_plot(data, outFileName=""):
     # Add total consumption
     hours = float(
         (data.index.values[-1] - data.index.values[0])) * 10**-9 / 3600
-    total_production = df["Production"].sum() / hours
-    total_consumption = df["Consumption"].sum() / hours
+    total_selfConsumption = df["SelfConsumption"].sum() / hours
+    total_purchased = df["Purchased"].sum() / hours
     total_feedin = df["FeedIn"].sum() / hours
-    total = (total_consumption - total_production - total_feedin)
+    total = (total_purchased - total_selfConsumption - total_feedin)
 
-    # Plot lines
-    logging.info("Generating plot")
     df.plot(
-        style=["--", "-", ":"],
+        style=["-", "--", ":"],
         figsize=(width, height),
         cmap=cmap,
         fontsize=fontsize,
+        stacked=True
     )
+
+    plt.fill_between(df.index, df["SelfConsumption"])
 
     # Formatting
     for line in plt.gca().get_lines():
         line.set_linewidth(2)  # Line thickness
-    plt.title(f"Gesamtverbrauch (24h): {total:.2f}kWh", fontsize=fontsize*1.2)
+    plt.title(
+        f"Gesamtverbrauch (24h): {total:.2f}kWh", fontsize=fontsize * 1.2)
     plt.grid(linewidth=2)
     plt.xlabel("")
-    plt.ylabel("Leistung [kW]", fontsize=fontsize*1.2)
+    plt.ylabel("Leistung [kW]", fontsize=fontsize * 1.2)
     plt.legend(
         labels=[
-            f"Produktion: {total_production:.2f} kWh",
-            f"Verbrauch:  {total_consumption:.2f} kWh",
+            f"Produktion: {total_selfConsumption:.2f} kWh",
+            f"Zukauf:       {total_purchased:.2f} kWh",
             f"Rückspeis.: {total_feedin:.2f} kWh", ],
         fontsize=fontsize)
     plt.gca().xaxis.set_tick_params(which='both', width=3, labelsize=16)

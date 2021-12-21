@@ -11,6 +11,7 @@ from datetime import date, datetime, timedelta
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import src.config as cfg
 
+
 class SE_Interface:
     url_request = str
     last_response = requests
@@ -51,7 +52,7 @@ class SE_Interface:
 
         # (Production/Consumption/SelfConsumption/FeedIn (export)/Purchased(import))
 
-        meters = "Consumption,Production,SelfConsumption,FeedIn"
+        meters = "Consumption,Production,SelfConsumption,FeedIn,Purchased"
         meterCnt = 1
         for letter in meters:
             if letter == ",":
