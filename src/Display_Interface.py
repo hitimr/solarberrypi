@@ -39,7 +39,7 @@ def generate_plot(data, outFileName=""):
 
     # Add total consumption
     hours = float(
-        (data.index.values[-1] - data.index.values[0])) * 10**-9 / 3600
+        (data.index.values[-1] - data.index.values[0])) * 10**-9 / (3600 * 4)
     total_selfConsumption = df["SelfConsumption"].sum() / hours
     total_purchased = df["Purchased"].sum() / hours
     total_feedin = df["FeedIn"].sum() / hours
@@ -71,7 +71,7 @@ def generate_plot(data, outFileName=""):
         fontsize=fontsize)
     plt.gca().xaxis.set_tick_params(which='both', width=3, labelsize=16)
     plt.gca().yaxis.set_tick_params(which='both', width=3, labelsize=16)
-    plt.ylim([0, df.max().max()*1.1])
+    plt.ylim([0, df.max().max() * 1.1])
 
     # Output
     # plt.tight_layout()
