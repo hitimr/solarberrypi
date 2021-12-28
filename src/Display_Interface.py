@@ -39,7 +39,7 @@ def generate_plot(data, outFileName=""):
 
     # Add total consumption
     hours = float(
-        (data.index.values[-1] - data.index.values[0])) * 10**-9 / (3600 * 4 / 1.5)
+        (data.index.values[-1] - data.index.values[0])) * 10**-9 / (3600 * 6)
     total_selfConsumption = df["SelfConsumption"].sum() / hours
     total_purchased = df["Purchased"].sum() / hours
     total_feedin = df["FeedIn"].sum() / hours
