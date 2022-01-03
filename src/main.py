@@ -10,12 +10,13 @@ import misc
 
 
 if __name__ == "__main__":
+    #now = datetime(year=2021, month=8, day=10, hour=23)
     now = datetime.now()
 
     if(misc.is_birthday(now) == False):
         se_interface = SE_Interface()
         data = se_interface.request_SitePowerDetailed(
-            datetime.now(), timedelta(days=1))
+            now, timedelta(days=1))
 
         logging.info("Generating plot")
         plotFile = DIR_OUT + "plot.png"
