@@ -7,6 +7,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 from matplotlib import colors
 import pandas as pd
+from datetime import date, datetime, timedelta
 
 # Project Stuff
 import os
@@ -37,12 +38,22 @@ def generate_plot(data, outFileName=""):
     height = cfg.EPD_HEIGHT / scaling
     cmap = colors.ListedColormap(["black"])
 
+    # Extract data rom current day only
+    df["day"] = df.index.day
+    current_day = datetime.now().day
+    df_today = df[df["day"] == current_day]
+    df = df.drop(columns=["day"])
+
+    # get seconds since midnight
+    now = datetime.now()
+    seconds_since_midnight = (
+        now - now.replace(hour=0, minute=0, second=0, microsecond=0)).total_seconds()
+
     # Add total consumption
-    hours = float(
-        (data.index.values[-1] - data.index.values[0])) * 10**-9 / (3600 * 6)
-    total_selfConsumption = df["SelfConsumption"].sum() / hours
-    total_purchased = df["Purchased"].sum() / hours
-    total_feedin = df["FeedIn"].sum() / hours
+    dt = len(df_today) / 300
+    total_selfConsumption = df_today["SelfConsumption"].sum() * dt
+    total_purchased = df_today["Purchased"].sum() * dt
+    total_feedin = df_today["FeedIn"].sum() * dt
     total = (total_purchased - total_selfConsumption - total_feedin)
 
     df.plot(
@@ -106,15 +117,21 @@ def display_image(fileName):
     logging.info("Initializing Display")
     epd = EPD()
     epd.init()
+    # epd.Clear()
 
     # save output to file as well
     logging.info("Saving bitmap")
     file_out = cfg.DIR_OUT + "plot.bmp"
     img.save(file_out)
 
+    Himage = Image.open(cfg.DIR_OUT + "plot.bmp")
+
     logging.info("Writing data")
-    epd.display(epd.getbuffer(img))
+    epd.display(epd.getbuffer(Himage))
+    time.sleep(2)
     logging.info("Writing data complete")
+
+    epd.sleep()
 
 
 if __name__ == "__main__":
