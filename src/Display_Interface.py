@@ -87,7 +87,7 @@ def generate_plot(data, outFileName=""):
     # Output
     # plt.tight_layout()
     page_margin = 0.075
-    plt.subplots_adjust(left=0.07, right=0.995, top=0.995, bottom=0.11)
+    plt.subplots_adjust(left=0.07, right=0.995, top=0.995, bottom=0.125)
     plt.savefig("out/plot.png", dpi=500, facecolor="white")
 
     # Output
