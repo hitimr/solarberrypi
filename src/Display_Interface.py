@@ -82,7 +82,7 @@ def generate_plot(data, outFileName=""):
         fontsize=fontsize)
     plt.gca().xaxis.set_tick_params(which='both', width=3, labelsize=16)
     plt.gca().yaxis.set_tick_params(which='both', width=3, labelsize=16)
-    plt.ylim([0, df.max().max() * 1.6])
+    plt.ylim(bottom=0)
 
     # Output
     # plt.tight_layout()
